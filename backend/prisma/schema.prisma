@@ -25,4 +25,6 @@ model Task {
   completed Boolean @default(false)
   userId String
   user User @relation(fields:[userId], references:[id])
+    @@unique([id, userId]) 
+
 }

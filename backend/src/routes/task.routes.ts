@@ -75,39 +75,12 @@ router.delete(
   },
 );
 
-// Update a task
-router.put(
-  "/:id",
-  authenticateToken,
-  async (req: AuthenticatedRequest, res) => {
-    const { id } = req.params;
-    const { title, completed } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ message: "Task ID is required" });
-    }
-
-    const task = await prisma.task.update({
-      where: {
-        id: String(id),
-        userId: Array.isArray(req.userId) ? req.userId[0] : req.userId,
-      },
-      data: {
-        title,
-        completed,
-      },
-    });
-
-    res.json({ message: "Task updated successfully", task });
-  },
-);
-
 // Toggle task completion
 router.patch(
   "/:id/toggle",
   authenticateToken,
   async (req: AuthenticatedRequest, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
     const task = await prisma.task.findUnique({
       where: {
         id: String(id),
@@ -126,7 +99,10 @@ router.patch(
         completed: !task.completed,
       },
     });
-    res.json({ message: "Task completion toggled successfully", task: updatedTask });
+    res.json({
+      message: "Task completion toggled successfully",
+      task: updatedTask,
+    });
   },
 );
 
