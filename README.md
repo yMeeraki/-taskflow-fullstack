@@ -32,3 +32,18 @@
 ### 1. Clone repo
 ```bash
 git clone <your-repo-link>
+```
+
+### 2. Backend setup
+```bash
+cd backend
+npm install
+npx prisma migrate dev
+npm run dev
+```
+### 3. Frontend setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
