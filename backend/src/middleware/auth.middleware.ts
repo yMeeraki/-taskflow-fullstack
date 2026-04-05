@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export interface AuthenticatedRequest extends Request {
   userId?: any;
@@ -18,7 +21,11 @@ export const authenticateToken = (
   }
 
   try {
-    const decoded = jwt.verify(token, "secretkey") as { userId: string };
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_SECRET || "access_token_secret",
+    ) as any;
+
     req.userId = decoded.userId;
     next();
   } catch (error) {
