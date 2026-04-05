@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "../utils/api";
+import AuthForm from "../components/AuthForm";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,43 +11,23 @@ export default function Login() {
 
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleLogin = async (email: string, password: string) => {
     try {
+      if (!email || !password) {
+        toast.error("Please fill all fields");
+        return;
+      }
+
       const res = await api("/auth/login", "POST", { email, password });
-      localStorage.setItem("token", res.token);
+
+      localStorage.setItem("token", res.accessToken || res.token);
       localStorage.setItem("refreshToken", res.refreshToken);
       router.push("/dashboard");
-    //   window.location.reload();
+      //   window.location.reload();
     } catch (error) {
       console.error("Login failed", error);
     }
   };
 
-  return (
-    <div>
-      <h1>Login</h1>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          placeholder="test@gmail.com"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          placeholder="password"
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div>
-        <button onClick={handleLogin}>Login</button>
-      </div>
-    </div>
-  );
+  return <AuthForm title="Login" onSubmit={handleLogin} />;
 }

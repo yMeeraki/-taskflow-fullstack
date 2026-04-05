@@ -2,6 +2,8 @@
 import React, { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "../utils/api";
+import AuthForm from "../components/AuthForm";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -9,8 +11,13 @@ export default function Register() {
 
   const router = useRouter();
 
-  const handleRegister = async () => {
+  const handleRegister = async (email: string, password: string) => {
     try {
+      if (!email || !password) {
+        toast.error("Please fill all fields");
+        return;
+      }
+
       const res = await api("/auth/register", "POST", { email, password });
       localStorage.setItem("token", res.accessToken);
       router.push("/dashboard");
@@ -20,30 +27,6 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          placeholder="test@gmail.com"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          placeholder="password"
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div>
-        <button onClick={handleRegister}>Register</button>
-      </div>
-    </div>
+    <AuthForm title="Register" onSubmit={handleRegister}/>
   );
 }
